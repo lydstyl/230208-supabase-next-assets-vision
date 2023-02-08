@@ -1,6 +1,6 @@
 # Assets vision
 
-A web app to manage your assets and have graphs with categorized assets proportion, accounts and more.
+A [web app](https://assets-vision.vercel.app/) to manage your assets and have graphs with categorized assets proportion, accounts and more.
 
 ## Supabase configuration
 
