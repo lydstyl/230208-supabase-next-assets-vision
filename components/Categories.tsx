@@ -1,41 +1,27 @@
 import { useState, useEffect } from "react"
-import {
-    useUser,
-    useSupabaseClient,
-    Session,
-} from "@supabase/auth-helpers-react"
+import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { Database } from "../utils/database.types"
-import { log } from "console"
 
 export default function Categories() {
-    const supabase = useSupabaseClient<Database>()
-    // const user = useUser()
     const [loading, setLoading] = useState(true)
-
     const [data, setData] = useState<any[]>([])
-    // const [username, setUsername] = useState<Profiles["username"]>(null)
-    // const [website, setWebsite] = useState<Profiles["website"]>(null)
+    const supabase = useSupabaseClient<Database>()
 
     useEffect(() => {
-        async function gett() {
+        ;(async function () {
             try {
-                const { data, error } = await supabase.from("profiles").select()
-                if (error) {
-                    console.log(`gb🚀 ~ gett ~ error`, error)
-                }
+                const { data, error } = await supabase
+                    .from("categories")
+                    .select("id, name")
 
-                return data
-            } catch {}
-        }
+                if (error) console.error(error)
 
-        gett()
-            .then(data => {
-                console.log(`gb🚀 ~ .then ~ data`, data)
                 setData(data)
-            })
-            .catch(console.error)
-
-        setLoading(false)
+                setLoading(false)
+            } catch (error) {
+                console.log(`gb🚀 ~ error`, error)
+            }
+        })()
 
         return () => {
             console.log("useEffect clean up return func.")
@@ -44,16 +30,16 @@ export default function Categories() {
 
     return (
         <div>
-            <p>Liste des categories:</p>
+            <h2>Liste des categories</h2>
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <div>
-                    Les data:{" "}
+                <ul>
+                    <p>Les data :</p>
                     {data.map(row => (
-                        <p key={row.id}>{row.id}</p>
+                        <li key={row.id}>{row.name}</li>
                     ))}
-                </div>
+                </ul>
             )}
         </div>
     )
