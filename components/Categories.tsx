@@ -2,9 +2,14 @@ import { useState, useEffect } from "react"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { Database } from "../utils/database.types"
 
+type Category = {
+    id: string
+    name: string
+}
+
 export default function Categories() {
     const [loading, setLoading] = useState(true)
-    const [data, setData] = useState<any[]>([])
+    const [data, setData] = useState<Category[]>([])
     const supabase = useSupabaseClient<Database>()
 
     useEffect(() => {
@@ -14,10 +19,14 @@ export default function Categories() {
                     .from("categories")
                     .select("id, name")
 
-                if (error) console.error(error)
-
-                setData(data)
-                setLoading(false)
+                if (error) {
+                    console.error(error)
+                    return
+                }
+                if (data) {
+                    setData(data)
+                    setLoading(false)
+                }
             } catch (error) {
                 console.log(`gb🚀 ~ error`, error)
             }
@@ -26,7 +35,7 @@ export default function Categories() {
         return () => {
             console.log("useEffect clean up return func.")
         }
-    }, [])
+    }, [supabase])
 
     return (
         <div>
