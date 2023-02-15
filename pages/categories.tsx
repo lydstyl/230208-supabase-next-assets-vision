@@ -5,6 +5,7 @@ export default function Categories() {
 
     return (
         <div>
+            {" "}
             <h2>Liste des categories</h2>
             {loading ? (
                 <p>Loading...</p>
@@ -15,7 +16,7 @@ export default function Categories() {
                         <li key={row.id}>{row.name}</li>
                     ))}
                 </ul>
-            )}
+            )}{" "}
         </div>
     )
 }
