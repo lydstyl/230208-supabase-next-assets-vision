@@ -5,7 +5,8 @@ export default function Categories() {
 
     return (
         <div>
-            {" "}
+            <h2>Add a category</h2>
+            <input type="text" name="name" />
             <h2>Liste des categories</h2>
             {loading ? (
                 <p>Loading...</p>
