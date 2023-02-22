@@ -1,7 +1,6 @@
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react"
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react"
 import Account from "../components/Account"
-import Categories from "../components/Categories"
 
 const Home = () => {
     const session = useSession()
@@ -18,8 +17,6 @@ const Home = () => {
             ) : (
                 <>
                     <Account session={session} />
-
-                    <Categories />
                 </>
             )}
         </div>

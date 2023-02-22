@@ -1,8 +1,11 @@
 import "@/styles/globals.css"
 import { useState } from "react"
+import { QueryClient, QueryClientProvider, useQuery } from "react-query"
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react"
 import { AppProps } from "next/app"
+
+const queryClient = new QueryClient()
 
 function MyApp({
     Component,
@@ -13,12 +16,14 @@ function MyApp({
     const [supabase] = useState(() => createBrowserSupabaseClient())
 
     return (
-        <SessionContextProvider
-            supabaseClient={supabase}
-            initialSession={pageProps.initialSession}
-        >
-            <Component {...pageProps} />
-        </SessionContextProvider>
+        <QueryClientProvider client={queryClient}>
+            <SessionContextProvider
+                supabaseClient={supabase}
+                initialSession={pageProps.initialSession}
+            >
+                <Component {...pageProps} />
+            </SessionContextProvider>
+        </QueryClientProvider>
     )
 }
 export default MyApp
