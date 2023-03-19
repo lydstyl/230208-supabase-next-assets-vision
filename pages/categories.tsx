@@ -4,8 +4,10 @@ import {
     useSupabaseClient,
 } from "@supabase/auth-helpers-react"
 import { PostgrestError } from "@supabase/supabase-js"
-import { useQuery, useQueryClient } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { Category } from "../utils/types"
+import CategoryItem from "../components/CategoryItem"
+import { useRef } from "react"
 
 type GetCategories = Category[] | PostgrestError
 
@@ -22,11 +24,12 @@ async function getCategories(
 
     return data
 }
-async function addCategory(
-    supabase: SupabaseClient<any, "public", any>,
-    userId: string,
+async function addCategory(vars: {
+    supabase: SupabaseClient<any, "public", any>
+    userId: string
     name: string
-) {
+}) {
+    const { supabase, userId, name } = vars
     const newCategory = {
         name,
         user_id: userId,
@@ -42,57 +45,53 @@ async function addCategory(
         console.log(`gb🚀 ~ data:`, data)
     }
 }
-async function deleteCategory(
-    supabase: SupabaseClient<any, "public", any>,
-    name: string // to do change it with id
-) {
-    const { error } = await supabase
-        .from("categories")
-        .delete()
-        // .eq('id', 11)
-        .eq("name", name)
-    if (error) {
-        console.error(error)
-        return
-    }
-}
 
 export default function Categories() {
     const session = useSession()
     const supabase = useSupabaseClient()
-
+    const name = useRef<HTMLInputElement>(null)
     const queryClient = useQueryClient()
     const { isLoading, error, data } = useQuery("categories", () => {
         return getCategories(supabase)
     })
+    const mutation = useMutation(addCategory, {
+        onSuccess: () => {
+            queryClient.invalidateQueries("categories")
+        },
+    })
+
     const handleClickAddCategory = () => {
         const userId: string = session?.user.id || ""
-        addCategory(supabase, userId, "new category")
-    }
-    const handleClickDeleteCategory = () => {
-        deleteCategory(supabase, "new category")
-    }
 
-    queryClient.invalidateQueries("categories")
+        let category = "cat"
+
+        if (name.current) {
+            category = name.current.value ? name.current.value : "cat"
+        }
+
+        mutation.mutate({ supabase, userId, name: category })
+    }
 
     if (isLoading) return "Loading..."
     if (error) return "An error has occurred: " + JSON.stringify(error)
+    if (!Array.isArray(data)) return "Something went wrong."
+    if (!data.length) return "There is no category"
 
     return (
         <div>
             <h2>Add a category</h2>
-            <input type="text" name="name" />
+            <input type="text" name="name" ref={name} />
             <button onClick={handleClickAddCategory}>add category</button>
-            <button onClick={handleClickDeleteCategory}>delete category</button>
             <h2>Liste des categories</h2>
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
                 <ul>
                     <p>Les data :</p>
-                    {Array.isArray(data)
-                        ? data.map(row => <li key={row.id}>{row.name}</li>)
-                        : "There is no category"}
+
+                    {data.map(row => (
+                        <CategoryItem key={row.id} name={row.name} />
+                    ))}
                 </ul>
             )}
         </div>
