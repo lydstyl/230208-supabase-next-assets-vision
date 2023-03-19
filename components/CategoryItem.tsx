@@ -1,41 +1,16 @@
-import { SupabaseClient, useSupabaseClient } from "@supabase/auth-helpers-react"
-import { useMutation, useQueryClient } from "react-query"
+import useDeleteCategory from "@/hooks/useDeleteCategory"
 
 type CategoryItemProps = {
     name: string
 }
 
-async function deleteCategory(
-    supabase: SupabaseClient<any, "public", any>,
-    name: string // to do change it with id ?
-) {
-    const { error } = await supabase
-        .from("categories")
-        .delete()
-        .eq("name", name)
-    if (error) {
-        console.error(error)
-        return
-    }
-}
-
 function CategoryItem({ name }: CategoryItemProps) {
-    const supabase = useSupabaseClient()
-    const queryClient = useQueryClient()
-    const mutation = useMutation(() => deleteCategory(supabase, name), {
-        onSuccess: () => {
-            queryClient.invalidateQueries("categories")
-        },
-    })
-
-    const handleClickDeleteCategory = () => {
-        mutation.mutate()
-    }
+    const deleteCategory = useDeleteCategory(name)
 
     return (
         <li>
             <p>{name}</p>
-            <button onClick={handleClickDeleteCategory}>delete</button>
+            <button onClick={deleteCategory}>delete</button>
         </li>
     )
 }

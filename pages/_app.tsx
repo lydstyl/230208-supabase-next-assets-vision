@@ -1,6 +1,6 @@
 import "@/styles/globals.css"
 import { useState } from "react"
-import { QueryClient, QueryClientProvider, useQuery } from "react-query"
+import { QueryClient, QueryClientProvider } from "react-query"
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs"
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react"
 import { AppProps } from "next/app"
