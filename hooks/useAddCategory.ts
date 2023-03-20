@@ -1,13 +1,10 @@
 import { RefObject } from "react"
 import { useQueryClient, useMutation } from "react-query"
-import {
-    SupabaseClient,
-    useSession,
-    useSupabaseClient,
-} from "@supabase/auth-helpers-react"
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react"
+import { Supabase } from "@/utils/types"
 
 async function dbAddCategory(vars: {
-    supabase: SupabaseClient<any, "public", any>
+    supabase: Supabase
     userId: string
     name: string
 }) {

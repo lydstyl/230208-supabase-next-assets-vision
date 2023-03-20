@@ -1,7 +1,7 @@
-import { SupabaseClient, useSupabaseClient } from "@supabase/auth-helpers-react"
+import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { useMutation, useQueryClient } from "react-query"
+import { Supabase } from "@/utils/types"
 
-type Supabase = SupabaseClient<any, "public", any>
 type DBDeleteCategory = {
     name: string
     supabase: Supabase

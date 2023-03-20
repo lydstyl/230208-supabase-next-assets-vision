@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
+import Image from "next/image"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { Database } from "../utils/database.types"
+
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"]
 
 export default function Avatar({
@@ -19,23 +21,22 @@ export default function Avatar({
     const [uploading, setUploading] = useState(false)
 
     useEffect(() => {
-        if (url) downloadImage(url)
-    }, [url])
-
-    async function downloadImage(path: string) {
-        try {
-            const { data, error } = await supabase.storage
-                .from("avatars")
-                .download(path)
-            if (error) {
-                throw error
+        async function downloadImage(path: string) {
+            try {
+                const { data, error } = await supabase.storage
+                    .from("avatars")
+                    .download(path)
+                if (error) {
+                    throw error
+                }
+                const url = URL.createObjectURL(data)
+                setAvatarUrl(url)
+            } catch (error) {
+                console.log("Error downloading image: ", error)
             }
-            const url = URL.createObjectURL(data)
-            setAvatarUrl(url)
-        } catch (error) {
-            console.log("Error downloading image: ", error)
         }
-    }
+        if (url) downloadImage(url)
+    }, [url]) // do not add supabase.storage here because it infinit loop image src url
 
     const uploadAvatar: React.ChangeEventHandler<
         HTMLInputElement
@@ -72,7 +73,9 @@ export default function Avatar({
     return (
         <div>
             {avatarUrl ? (
-                <img
+                <Image
+                    width={150}
+                    height={150}
                     src={avatarUrl}
                     alt="Avatar"
                     className="avatar image"
